@@ -2,15 +2,16 @@ import argparse
 import os
 import time
 import googleapiclient.discovery
+from googleapiclient.errors import HttpError
 from six.moves import input
 
 
-def list_instances(compute, project, zone):
+def listInstances(compute, project, zone):
     result = compute.instances().list(project=project, zone=zone).execute()
     return result['items'] if 'items' in result else None
 
 
-def create_instance(compute, project, zone, name):
+def createInstance(compute, project, zone, name):
     # Get the latest Ubuntu Focal Fossa image.
     image_response = compute.images().getFromFamily(
         project='ubuntu-os-cloud', family='ubuntu-2004-lts').execute()
@@ -72,14 +73,14 @@ def create_instance(compute, project, zone, name):
         body=config).execute()
 
 
-def delete_instance(compute, project, zone, name):
+def deleteInstance(compute, project, zone, name):
     return compute.instances().delete(
         project=project,
         zone=zone,
         instance=name).execute()
 
 
-def wait_for_operation(compute, project, zone, operation):
+def waitForOperation(compute, project, zone, operation):
     print('Waiting for operation to finish...')
     while True:
         result = compute.zoneOperations().get(
@@ -96,23 +97,40 @@ def wait_for_operation(compute, project, zone, operation):
         time.sleep(1)
 
 
-def main(project, zones, instance_name, wait=True):
+def createInstances(project, zones, instanceName, wait=True):
     compute = googleapiclient.discovery.build('compute', 'v1')
     for zone in zones:
         print('Zone:',zone)
         print('Creating instance.')
+        try:
+            operation = createInstance(compute, project, zone, instanceName)
+            waitForOperation(compute, project, zone, operation['name'])
+        except HttpError as e:
+            if e.resp.status in [409]:
+                print("Instance: " + instanceName + " already exists in project: " + project + " and zone: " + zone)
+            else:
+                raise
 
-        operation = create_instance(compute, project, zone, instance_name)
-        wait_for_operation(compute, project, zone, operation['name'])
-
-        instances = list_instances(compute, project, zone)
+        instances = listInstances(compute, project, zone)
 
         print('Instances in project %s and zone %s:' % (project, zone))
         for instance in instances:
             print(' - ' + instance['name'])
 
-        #operation = delete_instance(compute, project, zone, instance_name)
-        #wait_for_operation(compute, project, zone, operation['name'])
+
+def deleteInstances(project, zones, instanceName, wait=True):
+    for zone in zones:
+        print('Zone:',zone)
+
+        compute = googleapiclient.discovery.build('compute', 'v1')
+        instances = listInstances(compute, project, zone)
+
+        print('Instances in project %s and zone %s:' % (project, zone))
+        for instance in instances:
+            if instanceName in instance['name']:
+                print('Deleting instance' + ' - ' + instance['name'])
+                operation = deleteInstance(compute, project, zone, instance['name'])
+                waitForOperation(compute, project, zone, operation['name'])
 
 
 if __name__ == '__main__':
@@ -130,4 +148,4 @@ if __name__ == '__main__':
     zones = []
     for zone in ['a','b','c']:
         zones.append(args.zone+'-'+zone)
-    main("mongodb-276412", zones, args.hostname)
+    createInstances("mongodb-276412", zones, args.hostname)
