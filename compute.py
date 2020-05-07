@@ -119,14 +119,12 @@ def createInstances(project, zones, instanceName, wait=True):
 
 
 def deleteInstances(project, zones, instanceName, wait=True):
+    compute = googleapiclient.discovery.build('compute', 'v1')
     for zone in zones:
         print('Zone:',zone)
-        instanceName = instanceName+'-'+zone
-        compute = googleapiclient.discovery.build('compute', 'v1')
         instances = listInstances(compute, project, zone)
-
         try:
-            operation = deleteInstance(compute, project, zone, instanceName+zone)
+            operation = deleteInstance(compute, project, zone, instanceName+'-'+zone)
             print('Deleting instance.')
             waitForOperation(compute, project, zone, operation['name'])
         except HttpError as e:
@@ -140,15 +138,9 @@ def deleteInstances(project, zones, instanceName, wait=True):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description="Arguments for single compute instance creation.",
-        formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument(
-        '--zone',
-        default='europe-west4',
-        help='Compute Engine zone to deploy to.')
-    parser.add_argument(
-        'hostname', help='New instance name.')
+    parser = argparse.ArgumentParser(description="Arguments for single compute instance creation.")
+    parser.add_argument('--zone', default='europe-west4', help='Compute Engine zone to deploy to.')
+    parser.add_argument('hostname', help='New instance name.')
 
     args = parser.parse_args()
     zones = []
