@@ -13,19 +13,19 @@ def listInstances(compute, project, zone):
 
 def createInstance(compute, project, zone, name):
     # Get the latest Ubuntu Focal Fossa image.
-    image_response = compute.images().getFromFamily(
+    image = compute.images().getFromFamily(
         project='ubuntu-os-cloud', family='ubuntu-2004-lts').execute()
-    source_disk_image = image_response['selfLink']
+    sourceDisk = image['selfLink']
 
     # Configure the machine
-    machine_type = "zones/%s/machineTypes/n1-standard-1" % zone
-    startup_script = open(
+    machineType = "zones/%s/machineTypes/n1-standard-1" % zone
+    initScript = open(
         os.path.join(
             os.path.dirname(__file__), 'startupScripts/' + name), 'r').read()
 
     config = {
         'name': name+'-'+zone,
-        'machineType': machine_type,
+        'machine_type': machineType,
 
         # Specify the boot disk and the image to use as a source.
         'disks': [
@@ -33,7 +33,7 @@ def createInstance(compute, project, zone, name):
                 'boot': True,
                 'autoDelete': True,
                 'initializeParams': {
-                    'sourceImage': source_disk_image,
+                    'sourceImage': sourceDisk,
                 }
             }
         ],
@@ -62,7 +62,7 @@ def createInstance(compute, project, zone, name):
                 # Startup script is automatically executed by the
                 # instance upon startup.
                 'key': 'startup-script',
-                'value': startup_script
+                'value': initScript
             }]
         }
     }
@@ -121,16 +121,22 @@ def createInstances(project, zones, instanceName, wait=True):
 def deleteInstances(project, zones, instanceName, wait=True):
     for zone in zones:
         print('Zone:',zone)
-
+        instanceName = instanceName+'-'+zone
         compute = googleapiclient.discovery.build('compute', 'v1')
         instances = listInstances(compute, project, zone)
 
+        try:
+            operation = deleteInstance(compute, project, zone, instanceName+zone)
+            print('Deleting instance.')
+            waitForOperation(compute, project, zone, operation['name'])
+        except HttpError as e:
+            if e.resp.status in [404]:
+                print('No instance in zone: ' + zone + ' is deleted.')
+
         print('Instances in project %s and zone %s:' % (project, zone))
-        for instance in instances:
-            if instanceName in instance['name']:
-                print('Deleting instance' + ' - ' + instance['name'])
-                operation = deleteInstance(compute, project, zone, instance['name'])
-                waitForOperation(compute, project, zone, operation['name'])
+        if instances != None:
+            for instance in instances:
+                print(' - ' + instance['name'])
 
 
 if __name__ == '__main__':
@@ -148,4 +154,4 @@ if __name__ == '__main__':
     zones = []
     for zone in ['a','b','c']:
         zones.append(args.zone+'-'+zone)
-    createInstances("mongodb-276412", zones, args.hostname)
+    deleteInstances("mongodb-276412", zones, args.hostname)
