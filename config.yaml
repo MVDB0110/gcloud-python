@@ -1,0 +1,9 @@
+imports:
+- path: instance.py
+- path: network.py
+- path: firewall.py
+- path: template.py
+
+resources:
+- name: test
+  type: template.py
