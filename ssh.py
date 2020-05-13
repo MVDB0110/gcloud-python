@@ -2,7 +2,7 @@ def GenerateConfig(context):
   """Creates the firewall."""
 
   resources = [{
-      'name': context.env['name'],
+      'name': context.env['name']+'-ssh',
       'type': 'compute.v1.firewall',
       'properties': {
           'network': '$(ref.' + context.properties['network'] + '.selfLink)',

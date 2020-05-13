@@ -1,7 +1,7 @@
 imports:
 - path: instance.py
 - path: network.py
-- path: firewall.py
+- path: ssh.py
 - path: template.py
 
 resources:
