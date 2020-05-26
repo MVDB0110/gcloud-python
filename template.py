@@ -1,6 +1,6 @@
 networkName = "mongo"
 project = "mongodb-276412"
-clusters = ["data-router", "config-set", "data-set-1"]
+clusters = ["data-router", "config-set", "data-set1"]
 zones = ["europe-west4-a", "europe-west4-b", "europe-west4-c"]
 machineType = "n1-standard-1"
 
@@ -62,6 +62,15 @@ def GenerateConfig(context):
 
     for cluster in clusters:
         for zone in zones:
+            if cluster == "data-router":
+                networkType = "external"
+                subnet = "router"
+            elif cluster == "config-set":
+                networkType = "single"
+                subnet = "config"
+            elif cluster == "data-set1":
+                networkType = "single"
+                subnet = "data"
             compute = {
                 "name": str(cluster+'-'+zone.split('-')[2]).lower(),
                 "type": "instance.py",
@@ -69,8 +78,8 @@ def GenerateConfig(context):
                 "properties": {
                     "machineType": machineType,
                     "zone": zone,
-                    "network": networkName,
-                    "subNetwork": "data"
+                    "subNetwork": subnet,
+                    "networkType": networkType
                 }
             }
             resources.append(compute)

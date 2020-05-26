@@ -3,6 +3,19 @@ computeBaseUrl = 'https://www.googleapis.com/compute/v1/'
 def GenerateConfig(context):
     """Creates the second virtual machine."""
 
+    if context.properties['networkType'] == 'external':
+        networkInterfaces = [{
+            'subnetwork': '$(ref.' + context.properties['subNetwork'] + '.selfLink)',
+            'accessConfigs': [{
+                'name': 'External NAT',
+                'type': 'ONE_TO_ONE_NAT'
+            }]
+        }]
+    else:
+        networkInterfaces = [{
+                'subnetwork': '$(ref.' + context.properties['subNetwork'] + '.selfLink)',
+            }]
+
     resources = [{
         'name': context.env['name'],
         'type': 'compute.v1.instance',
@@ -23,14 +36,7 @@ def GenerateConfig(context):
                                             '/images/family/ubuntu-2004-lts'])
                 }
             }],
-            'networkInterfaces': [{
-                'subnetwork': '$(ref.' + context.properties['subNetwork'] + '.selfLink)',
-                'network': '$(ref.' + context.properties['network'] + '.selfLink)',
-                'accessConfigs': [{
-                    'name': 'External NAT',
-                    'type': 'ONE_TO_ONE_NAT'
-                }]
-            }],
+            'networkInterfaces': networkInterfaces,
             # Allow the instance to access logging.
             'serviceAccounts': [{
                 'email': 'default',
