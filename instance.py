@@ -5,7 +5,7 @@ def GenerateConfig(context):
 
     if context.properties['networkType'] == 'external':
         networkInterfaces = [{
-            'subnetwork': '$(ref.' + context.properties['subNetwork'] + '.selfLink)',
+            'subnetwork': context.properties['subNetwork'],
             'accessConfigs': [{
                 'name': 'External NAT',
                 'type': 'ONE_TO_ONE_NAT'
@@ -13,7 +13,7 @@ def GenerateConfig(context):
         }]
     else:
         networkInterfaces = [{
-                'subnetwork': '$(ref.' + context.properties['subNetwork'] + '.selfLink)',
+                'subnetwork': context.properties['subNetwork'],
             }]
 
     resources = [{

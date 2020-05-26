@@ -11,6 +11,13 @@ def GenerateConfig(context):
         "name": networkName,
         "type": "network.py"
     }, {
+        "name": networkName+ "-nat",
+        "type": "nat.py",
+        "properties": {
+            "network": "$(ref." + networkName + ".selfLink)",
+            "region": "europe-west4"
+        }
+    }, {
         "name": "routers",
         "type": "subnet.py",
         "properties": {
@@ -64,7 +71,7 @@ def GenerateConfig(context):
         for zone in zones:
             if cluster == "data-router":
                 networkType = "external"
-                subnet = "router"
+                subnet = "routers"
             elif cluster == "config-set":
                 networkType = "single"
                 subnet = "config"
@@ -78,7 +85,7 @@ def GenerateConfig(context):
                 "properties": {
                     "machineType": machineType,
                     "zone": zone,
-                    "subNetwork": subnet,
+                    "subNetwork": '$(ref.' + subnet + '.selfLink)',
                     "networkType": networkType
                 }
             }

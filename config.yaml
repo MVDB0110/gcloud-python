@@ -4,6 +4,7 @@ imports:
 - path: firewall.py
 - path: template.py
 - path: subnet.py
+- path: nat.py
 
 resources:
 - name: eeyoo-documentdb
