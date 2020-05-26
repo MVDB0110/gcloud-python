@@ -24,6 +24,7 @@ def GenerateConfig(context):
                 }
             }],
             'networkInterfaces': [{
+                'subnetwork': '$(ref.' + context.properties['subNetwork'] + '.selfLink)',
                 'network': '$(ref.' + context.properties['network'] + '.selfLink)',
                 'accessConfigs': [{
                     'name': 'External NAT',

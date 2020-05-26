@@ -1,9 +1,10 @@
 imports:
 - path: instance.py
 - path: network.py
-- path: ssh.py
+- path: firewall.py
 - path: template.py
+- path: subnet.py
 
 resources:
-- name: test
+- name: eeyoo-documentdb
   type: template.py

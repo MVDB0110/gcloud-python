@@ -8,7 +8,7 @@ def GenerateConfig(context):
           'routingConfig': {
               'routingMode': 'REGIONAL'
           },
-          'autoCreateSubnetworks': True
+          'autoCreateSubnetworks': False
       }
   }]
   return {'resources': resources}

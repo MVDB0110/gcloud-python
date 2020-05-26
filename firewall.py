@@ -6,10 +6,10 @@ def GenerateConfig(context):
       'type': 'compute.v1.firewall',
       'properties': {
           'network': '$(ref.' + context.properties['network'] + '.selfLink)',
-          'sourceRanges': ['0.0.0.0/0'],
+          'sourceRanges': context.properties['cidr'],
           'allowed': [{
-              'IPProtocol': 'TCP',
-              'ports': [22]
+              'IPProtocol': context.properties['protocol'],
+              'ports': context.properties['port']
           }]
       }
   }]
