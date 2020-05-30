@@ -72,12 +72,15 @@ def GenerateConfig(context):
             if cluster == "data-router":
                 networkType = "external"
                 subnet = "routers"
+                mongoType = "dbRouter"
             elif cluster == "config-set":
                 networkType = "single"
                 subnet = "config"
+                mongoType = "dbConfig"
             elif cluster == "data-set1":
                 networkType = "single"
                 subnet = "data"
+                mongoType = "dbData"
             compute = {
                 "name": str(cluster+'-'+zone.split('-')[2]).lower(),
                 "type": "instance.py",
@@ -86,7 +89,8 @@ def GenerateConfig(context):
                     "machineType": machineType,
                     "zone": zone,
                     "subNetwork": '$(ref.' + subnet + '.selfLink)',
-                    "networkType": networkType
+                    "networkType": networkType,
+                    "mongoType": mongoType
                 }
             }
             resources.append(compute)

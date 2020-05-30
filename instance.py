@@ -15,6 +15,12 @@ def GenerateConfig(context):
         networkInterfaces = [{
                 'subnetwork': context.properties['subNetwork'],
             }]
+    if context.properties['mongoType'] == 'dbData':
+        importScript = "mongodata.sh"
+    elif context.properties['mongoType'] == 'dbRouter':
+        importScript = "mongos.sh"
+    elif context.properties['mongoType'] == 'dbConfig':
+        importScript = "mongoconf.sh"
 
     resources = [{
         'name': context.env['name'],
@@ -49,7 +55,7 @@ def GenerateConfig(context):
                 'items': [{
                     # Startup script
                     'key': 'startup-script',
-                    'value': ''.join(['#!/bin/bash\n', 'echo "test" >> /test.txt'])
+                    'value': context.imports[importScript]
                 }]
             }
         }

@@ -5,6 +5,12 @@ imports:
 - path: template.py
 - path: subnet.py
 - path: nat.py
+- path: ./startupScripts/mongodata.sh
+  name: mongodata.sh
+- path: ./startupScripts/mongos.sh
+  name: mongos.sh
+- path: ./startupScripts/mongoconf.sh
+  name: mongoconf.sh
 
 resources:
 - name: eeyoo-documentdb
