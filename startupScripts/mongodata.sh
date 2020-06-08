@@ -19,7 +19,9 @@ net:
 processManagement:
   timeZoneInfo: /usr/share/zoneinfo
 replication:
-  replSetName: "cloud"
+  replSetName: "DataSet01"
+sharding:
+   clusterRole: shardsvr
 MONGO
 sudo systemctl enable --now mongod
 echo "Succes" > /install

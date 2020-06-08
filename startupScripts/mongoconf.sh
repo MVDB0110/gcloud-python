@@ -15,11 +15,13 @@ systemLog:
   path: /var/log/mongodb/mongod.log
 net:
   port: 27017
-  bindIpAll: true 
+  bindIpAll: true
 processManagement:
   timeZoneInfo: /usr/share/zoneinfo
 replication:
-  replSetName: "cloud"
+  replSetName: "ConfigSet01"
+sharding:
+   clusterRole: configsvr
 MONGO
 sudo systemctl enable --now mongod
 echo "Succes" > /install
