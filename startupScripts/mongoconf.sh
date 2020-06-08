@@ -14,12 +14,12 @@ systemLog:
   logAppend: true
   path: /var/log/mongodb/mongod.log
 net:
-  port: 27017
+  port: 27019
   bindIpAll: true
 processManagement:
   timeZoneInfo: /usr/share/zoneinfo
 replication:
-  replSetName: "ConfigSet01"
+  replSetName: "ConfigSet"
 sharding:
    clusterRole: configsvr
 MONGO

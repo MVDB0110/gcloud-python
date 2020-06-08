@@ -14,7 +14,7 @@ systemLog:
   logAppend: true
   path: /var/log/mongodb/mongod.log
 net:
-  port: 27017
+  port: 27018
   bindIpAll: true 
 processManagement:
   timeZoneInfo: /usr/share/zoneinfo

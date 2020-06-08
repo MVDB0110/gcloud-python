@@ -20,6 +20,12 @@ def GenerateConfig(context):
     elif context.properties['mongoType'] == 'dbRouter':
         importScript = "mongos.sh"
     elif context.properties['mongoType'] == 'dbConfig':
+        if 'a' in context.env['name']:
+            networkInterfaces[0]['networkIP'] = '10.0.2.10'
+        elif 'b' in context.env['name']:
+            networkInterfaces[0]['networkIP'] = '10.0.2.11'
+        elif 'c' in context.env['name']:
+            networkInterfaces[0]['networkIP'] = '10.0.2.12'
         importScript = "mongoconf.sh"
 
     resources = [{
@@ -44,12 +50,19 @@ def GenerateConfig(context):
             }],
             'networkInterfaces': networkInterfaces,
             # Allow the instance to access logging.
-            'serviceAccounts': [{
-                'email': 'default',
-                'scopes': [
-                    'https://www.googleapis.com/auth/logging.write'
+            "serviceAccounts": [
+                {
+                "email": "208077196965-compute@developer.gserviceaccount.com",
+                "scopes": [
+                    "https://www.googleapis.com/auth/devstorage.read_only",
+                    "https://www.googleapis.com/auth/logging.write",
+                    "https://www.googleapis.com/auth/monitoring.write",
+                    "https://www.googleapis.com/auth/servicecontrol",
+                    "https://www.googleapis.com/auth/service.management.readonly",
+                    "https://www.googleapis.com/auth/trace.append"
                 ]
-            }],
+                }
+            ],
             # Metadata
             'metadata': {
                 'items': [{

@@ -11,8 +11,10 @@ net:
   port: 27017
   bindIpAll: true 
 sharding:
-  configDB: 
+  configDB: "ConfigSet/10.0.2.10:27017,10.0.2.11:27017,10.0.2.12:27017"
 CONF
+
+mongo 10.0.2.10:27019 --eval 'rs.initiate( { _id: "ConfigSet", configsvr: true, members: [ { _id: 0, host: "10.0.2.10:27019" }, { _id: 1, host: "10.0.2.11:27019" }, { _id: 2, host: "10.0.2.12:27019" } ] } )' > /install
 
 sudo cat <<SYSTEMD > /lib/systemd/system/mongos.service
 [Unit]
@@ -42,4 +44,4 @@ WantedBy=multi-user.target
 SYSTEMD
 
 sudo systemctl enable --now mongos
-sudo echo "Succes" > /install
+sudo echo "\nSucces" >> /install
