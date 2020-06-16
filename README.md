@@ -9,5 +9,4 @@ Met Google Cloud SDK kan de config.yaml file gedeployed worden met "gcloud deplo
 
 
 **Let op**
-- Er moet een environment variabel gezet worden
-- Momenteel zijn alleen CLI arguments toegestaan
+- Namen etc. zijn nu hardcoded
